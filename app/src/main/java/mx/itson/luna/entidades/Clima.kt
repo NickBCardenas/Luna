@@ -8,4 +8,10 @@ class Clima {
 
     var windspeed: Float? = null
 
+    var winddirection: Float? = null
+
+    var elevation: Float? = null
+
+    var weathercode : Float? = null     
+
 }

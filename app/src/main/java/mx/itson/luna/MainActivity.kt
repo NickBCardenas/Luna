@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import mx.itson.luna.entidades.Clima
 import mx.itson.luna.entidades.Ubicacion
 import mx.itson.luna.utilerias.RetrofitUtil
 import retrofit2.Call
@@ -27,7 +28,14 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener  {
 
 
-    var mapa : GoogleMap? = null;
+    var mapa : GoogleMap? = null
+    var temp : Float? = null
+    var windsp : Float? = null
+    var winddir : Float? = null
+    var elev : Float? = null
+    var weacode : Float? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +43,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener  
 
         val mapaFragment = supportFragmentManager.findFragmentById(R.id.mapa) as SupportMapFragment //Se importa :P
         mapaFragment.getMapAsync ( this)
-
-
-
-        // obtenerUbicacion()
+        //obtenerUbicacion(lat = "", log = "")
     }
-
 
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -74,14 +78,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener  
         }
     }
 
-    fun obtenerUbicacion() {
-        val llamada : Call<Ubicacion> = RetrofitUtil.getApi().getClima("27.9678037", "-110.9186940", true)
+    fun obtenerUbicacion(lat : String, log : String) {
+        val llamada : Call<Ubicacion> = RetrofitUtil.getApi().getClima(lat,log , true)
 
         llamada.enqueue(object: Callback<Ubicacion>{
             override fun onResponse(call: Call<Ubicacion>, response: Response<Ubicacion>) {
                 val ubicacion: Ubicacion? = response.body()
-
+                 temp = ubicacion?.clima?.temperatura
+                 windsp = ubicacion?.clima?.windspeed
+                 winddir = ubicacion?.clima?.winddirection
+                 elev = ubicacion?.clima?.elevation
+                 weacode = ubicacion?.clima?.weathercode
+                Toast.makeText(this@MainActivity, " Temperatura " + temp + " WindSpeed "
+                        + windsp + " WindDirection " + " " + winddir + " Elevation " + elev   , Toast.LENGTH_SHORT).show()
                 var a : Int = 1
+
+
+
             }
 
             override fun onFailure(call: Call<Ubicacion>, t: Throwable) {
@@ -117,14 +130,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener  
 
             override fun onMarkerDragEnd(marker: Marker) {
                 val latLng = marker.position
+
                 //Efectos de prueba
                     Toast.makeText(this@MainActivity, "La latitud es "
                             + latLng.latitude + " y la longitud es " + latLng.longitude, Toast.LENGTH_SHORT).show()
+
+                obtenerUbicacion(latLng.longitude.toString(),latLng.latitude.toString())
             }
 
             override fun onMarkerDragStart(p0: Marker) {
 
             }
         })
+
+
     }
 }

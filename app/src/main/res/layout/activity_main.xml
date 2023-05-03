@@ -6,10 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+
+
     <fragment
         android:id="@+id/mapa"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        android:name="com.google.android.gms.maps.SupportMapFragment">
+
+    </fragment>
+
 
 </RelativeLayout>
